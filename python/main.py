@@ -9,7 +9,6 @@ from pdf_processor.summarizer import PDFSummarizer
 from pdf_processor.utils import validate_pdf, split_into_chunks
 from dotenv import load_dotenv
 from pdf_processor.podcast_generator import PodcastGenerator
-
 load_dotenv()
 
 def main():
@@ -46,6 +45,11 @@ def main():
                 # Generate podcast script
                 task = progress.add_task("[magenta]Generating podcast script...", total=1)
                 podcast_script = podcast_generator.generate(sentences)
+                progress.update(task, advance=1)
+
+                # Generate audio segments
+                task = progress.add_task("[blue]Generating audio segments...", total=1)
+                podcast_generator.generate_audio(podcast_script, "podcast")
                 progress.update(task, advance=1)
             
             # Print results

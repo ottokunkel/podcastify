@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to Podcast Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .upload-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        #status {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PDF to Podcast Converter</h1>
+        <div class="upload-section">
+            <form id="uploadForm">
+                <input type="file" id="pdfFile" accept=".pdf" required>
+                <button type="submit" class="btn">Convert to Podcast</button>
+            </form>
+            <div id="status"></div>
+            <div id="audioPlayer" style="display: none;">
+                <audio controls>
+                    <source id="audioSource" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                <br>
+                <a id="downloadLink" class="btn" style="display: none; margin-top: 10px;">
+                    Download Podcast
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('pdfFile');
+            const status = document.getElementById('status');
+            const audioPlayer = document.getElementById('audioPlayer');
+            const audioSource = document.getElementById('audioSource');
+            const downloadLink = document.getElementById('downloadLink');
+            
+            if (!fileInput.files[0]) {
+                status.textContent = 'Please select a PDF file';
+                status.className = 'error';
+                status.style.display = 'block';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            status.textContent = 'Processing PDF...';
+            status.className = '';
+            status.style.display = 'block';
+            
+            try {
+                const response = await fetch('/process-pdf/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to process PDF');
+                }
+
+                const blob = await response.blob();
+                const audioUrl = URL.createObjectURL(blob);
+                
+                audioSource.src = audioUrl;
+                audioPlayer.style.display = 'block';
+                
+                downloadLink.href = audioUrl;
+                downloadLink.download = 'podcast.mp3';
+                downloadLink.style.display = 'inline-block';
+                
+                status.textContent = 'Podcast generated successfully!';
+                status.className = 'success';
+            } catch (error) {
+                status.textContent = 'Error: ' + error.message;
+                status.className = 'error';
+                audioPlayer.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

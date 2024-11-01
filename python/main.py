@@ -1,11 +1,15 @@
 import os
-from langchain.llms import OpenAI
+from langchain_community.llms import OpenAI
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from rich.console import Console
 from rich.progress import Progress
 from pdf_processor.preprocessor import PDFPreprocessor
-from pdf_processor.utils import validate_pdf
+from pdf_processor.summarizer import PDFSummarizer
+from pdf_processor.utils import validate_pdf, split_into_chunks
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def main():
     """
@@ -15,7 +19,7 @@ def main():
     # Initialize console for rich output
     console = Console()
     
-    pdf_path = os.path.join("pdfs", "sample.pdf")
+    pdf_path = os.path.join("pdfs", "./book1.pdf")
     
     try:
         # Validate PDF file
@@ -34,18 +38,25 @@ def main():
                 progress.update(task, advance=1)
                 
                 # Segment text
-                task = progress.add_task("[yellow]Segmenting text...", total=1)
-                sentences = preprocessor.segment_text(cleaned_text)
+                task = progress.add_task("[yellow]Processing text...", total=1)
+                sentences = preprocessor.process_text(cleaned_text)
                 progress.update(task, advance=1)
             
             # Print results
             console.print("\n[bold green]Processing complete![/]")
             console.print(f"Found [cyan]{len(sentences)}[/] sentences")
             
-            # Preview first few sentences
-            console.print("\n[bold]First few sentences:[/]")
-            for i, sent in enumerate(sentences[:3]):
-                console.print(f"{i+1}. {sent}")
+            # Save processed text to file
+            output_path = os.path.join("output", "processed_text.txt")
+            os.makedirs("output", exist_ok=True)
+            
+            with Progress() as progress:
+                task = progress.add_task("[magenta]Saving text...", total=1)
+                with open(output_path, "w", encoding="utf-8") as f:
+                    f.write(sentences)
+                progress.update(task, advance=1)
+            
+            console.print(f"\nText saved to: [cyan]{output_path}[/]")
                 
     except FileNotFoundError as e:
         console.print(f"[bold red]Error:[/] {str(e)}")

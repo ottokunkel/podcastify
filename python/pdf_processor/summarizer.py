@@ -1,18 +1,22 @@
-from transformers import pipeline
+from langchain_openai.llms import OpenAI
+from langchain.chains import LLMChain
+from langchain.prompts import PromptTemplate
 from typing import List, Optional
 
 class PDFSummarizer:
-    def __init__(self, model_name: str = "facebook/bart-large-cnn"):
+    def __init__(self, model_name: str = "gpt-4o"):
         """Initialize the summarizer with specified model."""
-        self.summarizer = pipeline("summarization", model=model_name)
+        self.llm = OpenAI(model_name=model_name)
+        self.prompt = PromptTemplate(
+            input_variables=["text"],
+            template="Please summarize the following text:\n\n{text}"
+        )
+        self.chain = LLMChain(llm=self.llm, prompt=self.prompt)
     
     def summarize(self, text: str, max_length: int = 130, min_length: int = 30) -> str:
         """Generate summary of the input text."""
-        summary = self.summarizer(text, 
-                                max_length=max_length, 
-                                min_length=min_length, 
-                                do_sample=False)
-        return summary[0]['summary_text']
+        summary = self.chain.run(text=text)
+        return summary.strip()
     
     def summarize_chunks(self, text: str, chunk_size: int = 1024) -> str:
         """Summarize long text by breaking it into chunks."""
@@ -24,4 +28,4 @@ class PDFSummarizer:
                 summary = self.summarize(chunk)
                 summaries.append(summary)
         
-        return " ".join(summaries) 
+        return " ".join(summaries)

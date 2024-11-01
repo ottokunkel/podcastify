@@ -6,6 +6,7 @@ from pdf_processor.utils import validate_pdf
 from pdf_processor.podcast_generator import PodcastGenerator
 from dotenv import load_dotenv
 from io import BytesIO
+import uvicorn
 load_dotenv()
 
 app = FastAPI(
@@ -62,3 +63,6 @@ async def root():
     Root endpoint serving frontend/index.html
     """
     return FileResponse("frontend/index.html")
+
+if __name__ == '__main__':
+    uvicorn.run(app)

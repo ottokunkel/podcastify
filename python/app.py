@@ -17,20 +17,20 @@ app = FastAPI(
     version="1.0.0"
 )
 
-@app.post("/process-pdf/")
+@app.post("/upload")
 async def process_pdf(file: UploadFile = File(...), authorization: str = Header(None)):
     """
     Process a PDF file and return the cleaned text. Requires authentication.
     """
     # Verify user is authenticated
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Authorization header required")
+    # if not authorization:
+    #     raise HTTPException(status_code=401, detail="Authorization header required")
     
-    try:
-        # Verify the access token and get user
-        user = await get_user(authorization.split(" ")[1])
-    except:
-        raise HTTPException(status_code=401, detail="Invalid authentication token")
+    # try:
+    #     # Verify the access token and get user
+    #     user = await get_user(authorization.split(" ")[1])
+    # except:
+    #     raise HTTPException(status_code=401, detail="Invalid authentication token")
 
     podcast_generator = PodcastGenerator()
     if not file.filename.endswith('.pdf'):
@@ -105,7 +105,7 @@ async def login(credentials: dict = Body(...)):
         )
 
 
-@app.get("/")
+@app.get("/api/")
 async def root():
     """
     Root endpoint serving frontend/index.html

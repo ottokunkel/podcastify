@@ -26,7 +26,7 @@ Podcastify is a fullstack web app that provides a frontend to convert PDF docume
 - Text-to-Speech AI
 
 ### Demo
-[![Demo](https://raw.githubusercontent.com/username/repository/branch/path/to/thumbnail.jpg)](https://raw.githubusercontent.com/username/repository/branch/path/to/video.mp4)
+[![Demo](https://raw.github.com/ottokunkel/podcastApp/assets/frontend_image.png)](https://raw.github.com/ottokunkel/podcastApp/Podcast_demo.mp4)
 
 ## Getting Started
 

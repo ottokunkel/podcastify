@@ -1,10 +1,10 @@
 import Header from "@/components/Header";
 import Features from "@/components/Features";
 import FileUpload from "@/components/FileUpload";
-import { Button } from "@/components/ui/button";
+
 export default function Home() {
   return (
-    <main className="min-h-screen container mx-auto px-4 py-12 max-w-4xl">
+    <main className="flex-1 container mx-auto px-4 py-12 max-w-4xl">
       <div className="flex justify-between items-center mb-8">
         <div className="flex-1">
           <Header />

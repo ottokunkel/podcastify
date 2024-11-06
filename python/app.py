@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File, Header, Body
 from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pdf_processor.preprocessor import PDFPreprocessor
 from pdf_processor.summarizer import PDFSummarizer
 from pdf_processor.utils import validate_pdf
@@ -17,20 +18,28 @@ app = FastAPI(
     version="1.0.0"
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.post("/upload")
 async def process_pdf(file: UploadFile = File(...), authorization: str = Header(None)):
     """
     Process a PDF file and return the cleaned text. Requires authentication.
     """
     # Verify user is authenticated
-    # if not authorization:
-    #     raise HTTPException(status_code=401, detail="Authorization header required")
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Authorization header required")
     
-    # try:
-    #     # Verify the access token and get user
-    #     user = await get_user(authorization.split(" ")[1])
-    # except:
-    #     raise HTTPException(status_code=401, detail="Invalid authentication token")
+    try:
+        # Verify the access token and get user
+        user = await get_user(authorization.split(" ")[1])
+    except:
+        raise HTTPException(status_code=401, detail="Invalid authentication token")
 
     podcast_generator = PodcastGenerator()
     if not file.filename.endswith('.pdf'):
@@ -69,43 +78,7 @@ async def process_pdf(file: UploadFile = File(...), authorization: str = Header(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-@app.post("/login")
-async def login(credentials: dict = Body(...)):
-    """
-    Login endpoint to authenticate users and return access token
-    
-    Args:
-        credentials: Dict containing email and password
-        
-    Returns:
-        dict: Session data including access token
-        
-    Raises:
-        HTTPException: If credentials are invalid
-    """
-    try:
-        email = credentials.get("email")
-        password = credentials.get("password")
-        
-        if not email or not password:
-            raise HTTPException(
-                status_code=400,
-                detail="Email and password required"
-            )
-            
-        session = await verify_user(email, password)
-        return session
-        
-    except HTTPException as he:
-        raise he
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=str(e)
-        )
-
-
-@app.get("/api/")
+@app.get("/")
 async def root():
     """
     Root endpoint serving frontend/index.html
@@ -113,4 +86,4 @@ async def root():
     return FileResponse("frontend/index.html")
 
 if __name__ == '__main__':
-    uvicorn.run("app:app", host="0.0.0.0", port=8000)
+    uvicorn.run("app:app", host="localhost", port=8000)

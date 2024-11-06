@@ -1,0 +1,74 @@
+# Podcastify
+
+Podcastify is a fullstack web app that provides a frontend to convert PDF documents into audio podcasts using an LLM pipeline and TTS Model. 
+
+## Features
+
+- PDF to audio conversion
+- User authentication
+- Secure file handling
+- Browser-based audio playback
+- Responsive web interface
+
+## Tech Stack
+
+### Frontend
+- Next.js
+- TypeScript
+- Tailwind CSS
+- Supabase Auth
+- shadcn/ui components
+
+### Backend
+- FastAPI
+- Python
+- PDF processing libraries
+- Text-to-Speech AI
+
+### Demo
+[![Demo](https://raw.githubusercontent.com/username/repository/branch/path/to/thumbnail.jpg)](https://raw.githubusercontent.com/username/repository/branch/path/to/video.mp4)
+
+## Getting Started
+
+1. Clone the repository
+2. Set up environment variables in frontend/.env and python/.env:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key
+   NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
+   ```
+   ```
+   OPENAI_API_KEY=
+   SUPABASE_URL=
+   SUPABASE_ANON_KEY=
+   SUPABASE_SERVICE_ROLE_KEY=
+   SERVICE_PASS=
+   ``` 
+3. Install dependencies:
+   ```bash
+   # Frontend
+   cd frontend
+   npm install
+
+   # Backend
+   cd python
+   pip install -r requirements.txt
+   ```
+4. Run the development servers:
+   ```bash
+   # Frontend
+   npm run dev
+
+   # Backend
+   python app.py
+   ```
+
+## Usage
+
+1. Register or log in to your account
+2. Upload a PDF file (max 10MB)
+3. Wait for the processing to complete
+4. Download or stream the generated audio file
+
+## TODO
+- [ ] Implement Register API call in frontend 

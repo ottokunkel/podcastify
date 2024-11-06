@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
+import NavBar from "@/components/NavBar";
 
 
 export const metadata: Metadata = {
@@ -15,7 +15,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="flex flex-col min-h-screen">
+        <NavBar />
         {children}
       </body>
     </html>
